@@ -64,7 +64,45 @@ header p {
   font-size: 14px;
   display: flex;
   justify-content: space-between;
+  align-items: center;
   box-shadow: var(--shadow);
+}
+
+.data-source-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.refresh-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s;
+}
+
+.refresh-btn:hover {
+  background-color: #106ebe;
+}
+
+.refresh-btn:active {
+  background-color: #005a9e;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.refresh-btn.loading svg {
+  animation: spin 1s linear infinite;
 }
 
 .service-tabs {

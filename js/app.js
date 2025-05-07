@@ -34,6 +34,27 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('dataSourceIndicator').style.borderLeftColor = '#d13438';
         });
     
+    // Set up the refresh data button event listener
+    const refreshDataBtn = document.getElementById('refreshDataBtn');
+    if (refreshDataBtn) {
+        refreshDataBtn.addEventListener('click', async () => {
+            // Add loading state
+            refreshDataBtn.classList.add('loading');
+            refreshDataBtn.disabled = true;
+            
+            try {
+                // Call the data service to refresh pricing data
+                await DataService.refreshPricingData();
+                // Note: On success, the page will reload automatically
+            } catch (error) {
+                console.error('Failed to refresh data:', error);
+                // Remove loading state if there was an error
+                refreshDataBtn.classList.remove('loading');
+                refreshDataBtn.disabled = false;
+            }
+        });
+    }
+    
     // Set up the calculate button event listener
     document.getElementById('calculate-btn').addEventListener('click', () => {
         // Get the active service

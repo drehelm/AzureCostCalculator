@@ -12,6 +12,7 @@ A simple web application for estimating Azure cloud service costs.
 - View hourly, daily, monthly, and yearly cost estimates
 - Detailed cost breakdowns for each service
 - Works offline with cached pricing data
+- Optional proxy server for fetching live Azure pricing data
 
 ## How to Use
 
@@ -20,6 +21,17 @@ A simple web application for estimating Azure cloud service costs.
 3. Select the Azure service you want to calculate costs for
 4. Configure the service parameters
 5. Click "Calculate Cost" to see the estimated costs
+
+## Using Live Pricing Data
+
+By default, the calculator uses cached pricing data when run locally due to CORS restrictions. To use live data:
+
+1. Navigate to the `azure-pricing-proxy` directory
+2. Install dependencies with `npm install`
+3. Start the proxy server with `npm start`
+4. Once the proxy is running, click the "Refresh Data" button in the calculator
+
+Detailed instructions can be found in the `azure-pricing-proxy/README.md` file.
 
 ## Notes
 

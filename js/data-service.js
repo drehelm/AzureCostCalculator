@@ -12,8 +12,12 @@ const DataService = (() => {
     const _cacheExpiryKey = 'azure_pricing_data_expiry';
     const _cacheLifetime = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
     
-    // Azure Retail Prices API URL
-    const _apiUrl = 'https://prices.azure.com/api/retail/prices';
+    // Azure Retail Prices API URLs
+    const _directApiUrl = 'https://prices.azure.com/api/retail/prices';
+    const _proxyApiUrl = 'http://localhost:3000/api/prices';
+    
+    // Check if proxy is available (can be overridden)
+    let _useProxy = false;
     
     // Private methods
     
@@ -68,11 +72,44 @@ const DataService = (() => {
         return filters.join(' and ');
     };
     
-    // Fetch data from Azure Retail Prices API
+    // Check if the proxy server is available
+    const _checkProxyAvailability = async () => {
+        try {
+            const response = await fetch(`${_proxyApiUrl.split('/api/prices')[0]}/health`, {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' },
+                mode: 'cors',
+                timeout: 3000 // 3 second timeout
+            });
+            
+            if (response.ok) {
+                console.log('Azure pricing proxy server is available');
+                _useProxy = true;
+                return true;
+            }
+            
+            return false;
+        } catch (error) {
+            console.log('Azure pricing proxy server is not available, using direct API (which may fail due to CORS)');
+            _useProxy = false;
+            return false;
+        }
+    };
+    
+    // Fetch data from Azure Retail Prices API (with proxy fallback)
     const _fetchFromApi = async (params = {}) => {
+        // Check if proxy is available
+        await _checkProxyAvailability();
+        
         try {
             const filter = _formatApiFilter(params);
-            const url = `${_apiUrl}?$filter=${encodeURIComponent(filter)}`;
+            
+            // Use proxy if available, otherwise try direct API (likely to fail with CORS error)
+            const url = _useProxy
+                ? `${_proxyApiUrl}?filter=${encodeURIComponent(filter)}`
+                : `${_directApiUrl}?$filter=${encodeURIComponent(filter)}`;
+            
+            console.log(`Fetching pricing data from: ${url}`);
             
             const response = await fetch(url);
             
@@ -200,6 +237,54 @@ const DataService = (() => {
         
         getContainerPricing: function(region = 'eastus') {
             return FALLBACK_PRICING_DATA.containerInstances[region] || FALLBACK_PRICING_DATA.containerInstances.eastus;
+        },
+        
+        // Force refresh of pricing data from API
+        refreshPricingData: async function() {
+            try {
+                // Force proxy check
+                await _checkProxyAvailability();
+                
+                if (!_useProxy) {
+                    alert("Proxy server is not available. You need to run the local proxy server to use live data.");
+                    return {
+                        success: false,
+                        message: "Proxy server not available"
+                    };
+                }
+                
+                // Clear current cache
+                localStorage.removeItem(_cacheKey);
+                localStorage.removeItem(_cacheExpiryKey);
+                
+                // Fetch fresh data from API via proxy
+                const apiData = await _fetchFromApi({
+                    serviceName: 'Virtual Machines'
+                });
+                
+                // Cache the data
+                const cachedResult = _cacheData({
+                    data: apiData,
+                    lastUpdated: new Date().toISOString()
+                });
+                
+                console.log('Successfully refreshed pricing data from Azure API');
+                
+                // Reload the page to show fresh data
+                window.location.reload();
+                
+                return {
+                    success: true,
+                    message: "Data refreshed successfully"
+                };
+            } catch (error) {
+                console.error('Failed to refresh pricing data:', error);
+                alert("Failed to refresh pricing data. Please ensure the proxy server is running.");
+                return {
+                    success: false,
+                    message: error.message
+                };
+            }
         }
     };
 })();
