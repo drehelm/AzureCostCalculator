@@ -1,0 +1,109 @@
+/* Azure Cloud Cost Calculator - Responsive Stylesheet */
+
+/* Medium devices (tablets, less than 992px) */
+@media (max-width: 991.98px) {
+  .form-grid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  }
+  
+  header h1 {
+    font-size: 22px;
+  }
+}
+
+/* Small devices (landscape phones, less than 768px) */
+@media (max-width: 767.98px) {
+  .service-tabs {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .tab-btn {
+    padding: 10px 15px;
+    font-size: 14px;
+  }
+  
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .results-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  
+  header h1 {
+    font-size: 20px;
+  }
+  
+  header p {
+    font-size: 14px;
+  }
+}
+
+/* Extra small devices (portrait phones, less than 576px) */
+@media (max-width: 575.98px) {
+  .container {
+    padding: 0 15px;
+  }
+  
+  header {
+    padding: 15px 0;
+    margin-bottom: 20px;
+  }
+  
+  .calculator-panel,
+  .results-panel {
+    padding: 15px;
+    margin-bottom: 20px;
+  }
+  
+  .service-panel h2,
+  .results-panel h2 {
+    font-size: 18px;
+    margin-bottom: 15px;
+  }
+  
+  .form-group {
+    margin-bottom: 10px;
+  }
+  
+  .form-group label {
+    font-size: 14px;
+  }
+  
+  .calculate-btn {
+    padding: 10px 20px;
+    font-size: 15px;
+  }
+  
+  .results-grid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+  
+  .result-item {
+    padding: 12px;
+  }
+  
+  .result-value {
+    font-size: 20px;
+  }
+  
+  .cost-breakdown {
+    padding: 15px;
+  }
+  
+  .cost-breakdown h3 {
+    font-size: 16px;
+  }
+  
+  #breakdown-details {
+    font-size: 14px;
+  }
+  
+  footer {
+    font-size: 12px;
+    padding: 15px 0;
+  }
+}

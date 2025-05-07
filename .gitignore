@@ -1,0 +1,22 @@
+# System files
+.DS_Store
+Thumbs.db
+
+# Editor directories and files
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Temporary files
+*.tmp
+*.log
+
+# Don't need the package script in the repo
+package.sh
+
+# Don't include zip files
+*.zip
+
+# Don't need the test file
+test.html
