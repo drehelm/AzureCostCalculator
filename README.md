@@ -22,14 +22,31 @@ A simple web application for estimating Azure cloud service costs.
 4. Configure the service parameters
 5. Click "Calculate Cost" to see the estimated costs
 
-## Using Live Pricing Data
+## Pricing Data Updates
 
-By default, the calculator uses cached pricing data when run locally due to CORS restrictions. To use live data:
+The calculator uses pricing data that is regularly updated through two methods:
+
+### Automated Updates via GitHub Actions
+
+A GitHub Action automatically fetches fresh Azure pricing data on a weekly schedule:
+
+- Runs every Sunday at midnight UTC
+- Updates the fallback pricing file with current Azure prices
+- Automatically commits and pushes the changes
+- No manual intervention required
+
+This ensures that the GitHub Pages deployment always has reasonably up-to-date pricing, even without running a local server.
+
+### Local Development with Live Data
+
+For development or to get real-time pricing updates:
 
 1. Navigate to the `azure-pricing-proxy` directory
 2. Install dependencies with `npm install`
 3. Start the proxy server with `npm start`
 4. Once the proxy is running, click the "Refresh Data" button in the calculator
+
+The proxy server will automatically find an available port if 3000 is already in use.
 
 Detailed instructions can be found in the `azure-pricing-proxy/README.md` file.
 

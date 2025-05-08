@@ -1,0 +1,13 @@
+{
+  "name": "azure-pricing-scripts",
+  "version": "1.0.0",
+  "description": "Scripts to fetch Azure pricing data",
+  "main": "fetch-pricing-data.js",
+  "scripts": {
+    "fetch": "node fetch-pricing-data.js"
+  },
+  "dependencies": {
+    "axios": "^1.6.2",
+    "dotenv": "^16.3.1"
+  }
+}

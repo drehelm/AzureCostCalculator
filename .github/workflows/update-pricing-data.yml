@@ -1,0 +1,51 @@
+name: Update Azure Pricing Data
+
+on:
+  # Run on a schedule (once per week on Sunday at 00:00 UTC)
+  schedule:
+    - cron: '0 0 * * 0'
+  
+  # Allow manual triggering of the workflow
+  workflow_dispatch:
+
+jobs:
+  update-pricing:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+        working-directory: ./scripts
+      
+      - name: Fetch latest Azure pricing data
+        run: node fetch-pricing-data.js
+        working-directory: ./scripts
+      
+      - name: Check for changes
+        id: check_changes
+        run: |
+          git diff --quiet data/fallback-pricing.js || echo "changes=true" >> $GITHUB_OUTPUT
+      
+      - name: Commit and push if there are changes
+        if: steps.check_changes.outputs.changes == 'true'
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add data/fallback-pricing.js
+          git commit -m "Update Azure pricing data (automated)"
+          git push
+      
+      - name: No changes found
+        if: steps.check_changes.outputs.changes != 'true'
+        run: echo "No changes to Azure pricing data were found."
