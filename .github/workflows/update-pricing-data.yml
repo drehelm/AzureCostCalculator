@@ -22,8 +22,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '18'
-          # Don't use cache to avoid dependency lock file issues
-          cache: false
+          # Don't specify cache to avoid dependency lock file issues
       
       - name: Install dependencies
         run: npm install
