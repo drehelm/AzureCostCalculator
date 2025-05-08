@@ -14,10 +14,15 @@ const DataService = (() => {
     
     // Azure Retail Prices API URLs
     const _directApiUrl = 'https://prices.azure.com/api/retail/prices';
-    const _proxyApiUrl = 'http://localhost:3000/api/prices';
+    // Base proxy URL that will be dynamically updated with available port
+    let _proxyApiUrl = 'http://localhost:3000/api/prices';
+    
+    // Ports to try for the proxy server
+    const _proxyPorts = [3000, 3001, 3002, 3003, 8080, 8081];
     
     // Check if proxy is available (can be overridden)
     let _useProxy = false;
+    let _proxyPort = null;
     
     // Private methods
     
@@ -72,28 +77,60 @@ const DataService = (() => {
         return filters.join(' and ');
     };
     
-    // Check if the proxy server is available
+    // Check if the proxy server is available on any port
     const _checkProxyAvailability = async () => {
-        try {
-            const response = await fetch(`${_proxyApiUrl.split('/api/prices')[0]}/health`, {
-                method: 'GET',
-                headers: { 'Content-Type': 'application/json' },
-                mode: 'cors',
-                timeout: 3000 // 3 second timeout
-            });
-            
-            if (response.ok) {
-                console.log('Azure pricing proxy server is available');
-                _useProxy = true;
-                return true;
+        // If we've already found a working port, try that first
+        if (_proxyPort) {
+            try {
+                const response = await fetch(`http://localhost:${_proxyPort}/health`, {
+                    method: 'GET',
+                    headers: { 'Content-Type': 'application/json' },
+                    mode: 'cors',
+                    timeout: 2000 // 2 second timeout
+                });
+                
+                if (response.ok) {
+                    console.log(`Azure pricing proxy server is available on port ${_proxyPort}`);
+                    _useProxy = true;
+                    _proxyApiUrl = `http://localhost:${_proxyPort}/api/prices`;
+                    return true;
+                }
+            } catch (error) {
+                console.log(`Previously working proxy port ${_proxyPort} is no longer available`);
+                _proxyPort = null; // Reset since it's not working anymore
             }
-            
-            return false;
-        } catch (error) {
-            console.log('Azure pricing proxy server is not available, using direct API (which may fail due to CORS)');
-            _useProxy = false;
-            return false;
         }
+        
+        // Try each port in sequence until we find a working one
+        for (const port of _proxyPorts) {
+            console.log(`Checking for proxy server on port ${port}...`);
+            try {
+                const response = await fetch(`http://localhost:${port}/health`, {
+                    method: 'GET',
+                    headers: { 'Content-Type': 'application/json' },
+                    mode: 'cors',
+                    timeout: 1000 // Quick timeout to avoid long waits
+                });
+                
+                if (response.ok) {
+                    console.log(`Azure pricing proxy server found on port ${port}!`);
+                    _useProxy = true;
+                    _proxyPort = port;
+                    _proxyApiUrl = `http://localhost:${port}/api/prices`;
+                    return true;
+                }
+            } catch (error) {
+                // Just continue to the next port
+                console.log(`No proxy server detected on port ${port}`);
+            }
+        }
+        
+        // If we get here, no proxy was found on any port
+        console.log('Azure pricing proxy server is not available on any port');
+        console.log('Make sure the proxy server is running with: cd azure-pricing-proxy && npm start');
+        console.log('Using direct API (which will likely fail due to CORS restrictions)');
+        _useProxy = false;
+        return false;
     };
     
     // Fetch data from Azure Retail Prices API (with proxy fallback)
