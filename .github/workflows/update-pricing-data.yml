@@ -22,10 +22,11 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '18'
-          cache: 'npm'
+          # Don't use cache to avoid dependency lock file issues
+          cache: false
       
       - name: Install dependencies
-        run: npm ci
+        run: npm install
         working-directory: ./scripts
       
       - name: Fetch latest Azure pricing data
