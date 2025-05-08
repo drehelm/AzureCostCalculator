@@ -11,49 +11,17 @@ document.addEventListener('DOMContentLoaded', () => {
     UIController.init();
     
     // Initialize the data service
-    DataService.init()
-        .then(dataSourceInfo => {
-            // Update the data source indicator
-            const dataSourceText = document.getElementById('dataSourceText');
-            const dataSourceDate = document.getElementById('dataSourceDate');
-            
-            dataSourceText.textContent = dataSourceInfo.isLive 
-                ? 'Using live pricing data' 
-                : 'Using cached pricing data';
-            
-            dataSourceDate.textContent = `Last updated: ${dataSourceInfo.lastUpdated}`;
-            
-            // If using fallback data, change the indicator styling
-            if (!dataSourceInfo.isLive) {
-                document.getElementById('dataSourceIndicator').style.borderLeftColor = '#ffb900';
-            }
-        })
-        .catch(error => {
-            console.error('Error initializing data service:', error);
-            document.getElementById('dataSourceText').textContent = 'Error loading pricing data';
-            document.getElementById('dataSourceIndicator').style.borderLeftColor = '#d13438';
-        });
+    const dataSourceInfo = DataService.init();
+        
+    // Update the data source indicator
+    const dataSourceText = document.getElementById('dataSourceText');
+    const dataSourceDate = document.getElementById('dataSourceDate');
     
-    // Set up the refresh data button event listener
-    const refreshDataBtn = document.getElementById('refreshDataBtn');
-    if (refreshDataBtn) {
-        refreshDataBtn.addEventListener('click', async () => {
-            // Add loading state
-            refreshDataBtn.classList.add('loading');
-            refreshDataBtn.disabled = true;
-            
-            try {
-                // Call the data service to refresh pricing data
-                await DataService.refreshPricingData();
-                // Note: On success, the page will reload automatically
-            } catch (error) {
-                console.error('Failed to refresh data:', error);
-                // Remove loading state if there was an error
-                refreshDataBtn.classList.remove('loading');
-                refreshDataBtn.disabled = false;
-            }
-        });
-    }
+    dataSourceText.textContent = 'Azure pricing data';
+    dataSourceDate.textContent = `Last updated: ${dataSourceInfo.lastUpdated}`;
+    
+    // Set the data source indicator styling
+    document.getElementById('dataSourceIndicator').style.borderLeftColor = '#0078d4';
     
     // Set up the calculate button event listener
     document.getElementById('calculate-btn').addEventListener('click', () => {
