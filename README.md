@@ -11,8 +11,7 @@ A simple web application for estimating Azure cloud service costs.
   - Container Instances
 - View hourly, daily, monthly, and yearly cost estimates
 - Detailed cost breakdowns for each service
-- Works offline with cached pricing data
-- Optional proxy server for fetching live Azure pricing data
+- Uses pricing data that's automatically updated weekly via GitHub Actions
 
 ## How to Use
 
@@ -22,38 +21,22 @@ A simple web application for estimating Azure cloud service costs.
 4. Configure the service parameters
 5. Click "Calculate Cost" to see the estimated costs
 
-## Pricing Data Updates
+## Automated Pricing Data Updates
 
-The calculator uses pricing data that is regularly updated through two methods:
-
-### Automated Updates via GitHub Actions
-
-A GitHub Action automatically fetches fresh Azure pricing data on a weekly schedule:
+The calculator uses pricing data that is automatically updated on a weekly schedule via GitHub Actions:
 
 - Runs every Sunday at midnight UTC
-- Updates the fallback pricing file with current Azure prices
+- Connects to the Azure Retail Prices API to fetch the latest pricing data
+- Updates the pricing data file with current Azure prices
 - Automatically commits and pushes the changes
 - No manual intervention required
 
-This ensures that the GitHub Pages deployment always has reasonably up-to-date pricing, even without running a local server.
-
-### Local Development with Live Data
-
-For development or to get real-time pricing updates:
-
-1. Navigate to the `azure-pricing-proxy` directory
-2. Install dependencies with `npm install`
-3. Start the proxy server with `npm start`
-4. Once the proxy is running, click the "Refresh Data" button in the calculator
-
-The proxy server will automatically find an available port if 3000 is already in use.
-
-Detailed instructions can be found in the `azure-pricing-proxy/README.md` file.
+This ensures that both the local version and GitHub Pages deployment always have up-to-date pricing information without requiring any additional setup or configuration.
 
 ## Notes
 
-- The application uses cached pricing data when run locally due to CORS restrictions.
-- All calculations are estimates and may not reflect actual Azure pricing.
+- All calculations are estimates and may not reflect actual Azure pricing with 100% accuracy.
+- Pricing data is automatically updated weekly through GitHub Actions.
 - Last updated: May 2025
 
 ## Technical Details
