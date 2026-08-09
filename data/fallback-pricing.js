@@ -9,11 +9,11 @@
  * current Azure pricing. For the most accurate pricing,
  * the application will attempt to use the Azure Retail Prices API.
  * 
- * Last updated: August 2, 2026
+ * Last updated: August 9, 2026
  */
 
 const FALLBACK_PRICING_DATA = {
-  "lastUpdated": "2026-08-02T02:49:11.726Z",
+  "lastUpdated": "2026-08-09T01:45:51.462Z",
   "virtualMachines": {
     "eastus": {
       "dsv3": {
